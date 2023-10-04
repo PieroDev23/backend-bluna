@@ -37,18 +37,14 @@ export class UserRepository {
 
     }
 
-    static async create(data: User): Promise<User | undefined> {
+    static async create(data: User) {
         const pool = await Database.pool();
         const builder = new Builder<User>().setPool(pool);
         try {
-            const { recordset } = await builder
+            await builder
                 .insert({ into: 'users', data })
                 .execute();
-
-            const [user] = recordset;
             pool.close();
-
-            return user;
 
         } catch (error) {
             const { message } = processError(error);
