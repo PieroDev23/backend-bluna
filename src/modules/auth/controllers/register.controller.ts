@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { BaseController } from "@lib/http/BaseController.http";
 import { User } from "@lib/interfaces/baseDef.interfaces";
-import { UserRepository } from "@auth/repositories/user.repository";
+import { UserRepository } from "@shared/repositories/user.repository";
 import bcrypt from 'bcryptjs';
 import { genJWT } from "src/helpers/genJWT.helper";
 

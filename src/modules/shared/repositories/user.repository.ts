@@ -34,7 +34,25 @@ export class UserRepository {
     }
 
     static async getAll() {
+        const pool = await Database.pool();
+        const builder = new Builder<User>().setPool(pool);
+        try {
+            const { recordset } = await builder
+                .select({
+                    from: 'users',
+                    fields: ['user_id', 'first_name', 'last_name', 'email', 'role']
+                })
+                .execute();
 
+            pool.close();
+
+            return recordset as User[]
+
+        } catch (error) {
+            const { message } = processError(error);
+            console.log(message);
+            pool.close();
+        }
     }
 
     static async create(data: User) {
