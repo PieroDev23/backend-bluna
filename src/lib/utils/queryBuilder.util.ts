@@ -65,6 +65,18 @@ export class Builder<T> {
         return this;
     }
 
+    delete({ from, data, op }: { from: string, data: T, op: 'OR' | 'AND' }) {
+
+        const entries = Object.entries(data as Record<any, any>)
+
+        const arr = entries.map(([key, value]) => {
+            return [key, `@${value}`]
+        })
+
+        this.query = `DELETE FROM ${from} WHERE `
+
+    }
+
     raw(command: string) {
         this.query = command;
     }

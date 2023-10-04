@@ -62,6 +62,7 @@ export class UserRepository {
             await builder
                 .insert({ into: 'users', data })
                 .execute();
+
             pool.close();
 
         } catch (error) {

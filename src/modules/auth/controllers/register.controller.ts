@@ -14,7 +14,11 @@ class Controller extends BaseController {
             const dbUser = await UserRepository.findOneBy({ email });
 
             if (dbUser) {
-                this.badRequest(res, { ok: false, msg: 'this account already exist.' });
+                this.badRequest(res, {
+                    ok: false,
+                    msg: 'this account already exist.'
+                });
+
                 return
             }
 

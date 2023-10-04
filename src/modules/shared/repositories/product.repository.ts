@@ -32,7 +32,19 @@ export class ProductRepository {
     }
 
     static async create(data: Product) {
+        const pool = await Database.pool();
+        const builder = new Builder<Product>().setPool(pool);
 
+        try {
+            await builder
+                .insert({ into: 'products', data })
+                .execute();
+
+        } catch (error) {
+            const { message } = processError(error);
+            console.log(message);
+            pool.close();
+        }
 
     }
 
