@@ -5,6 +5,8 @@ import { Database } from "src/database";
 
 export class ProductRepository {
 
+
+
     static async findOneBy(data: Partial<Product>) {
 
     }
@@ -48,7 +50,37 @@ export class ProductRepository {
 
     }
 
-    static async drop(id: number) {
+    static async delete(product_id: number) {
+        const pool = await Database.pool();
+        const builder = new Builder<Product>().setPool(pool);
+        try {
+            await builder.delete({ from: 'products' })
+                .where({ fields: { product_id } })
+                .execute();
 
+        } catch (error) {
+            const { message } = processError(error);
+            console.log(message);
+            pool.close();
+        }
     }
+
+    static async update(data: Product) {
+        const pool = await Database.pool();
+        const builder = new Builder<Product>().setPool(pool);
+
+        try {
+            const { recordset } = await builder
+                .update({ from: 'products', columns: data })
+                .where({ fields: { product_id: data.product_id } }).execute();
+
+            const [product] = recordset;
+
+            return product as Product;
+        } catch (error) {
+
+        }
+    }
+
+
 }

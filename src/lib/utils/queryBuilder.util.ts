@@ -1,10 +1,11 @@
 import { ConnectionPool, Request } from "mssql";
+import { createInputsFromEntries } from "./getInput.util";
 
 export class Builder<T> {
-    protected pool: ConnectionPool;
-    protected query: string;
-    protected whiteSpace = "\u00A0";
-    protected request: Request;
+    private pool: ConnectionPool;
+    private query: string;
+    private whiteSpace = "\u00A0";
+    private request: Request;
 
     setPool(pool: ConnectionPool) {
         this.pool = pool;
@@ -12,7 +13,7 @@ export class Builder<T> {
     }
 
     select(data: { from: string; fields?: Array<keyof T> }) {
-        let properties: string = "*"
+        let properties: string = "*";
         if (data.fields) {
             properties = data.fields.join(", ");
         }
@@ -23,26 +24,11 @@ export class Builder<T> {
     }
 
     where({ fields, op }: { fields: Partial<T>; op?: "OR" | "AND" }) {
-        this.query = this.query
-            .concat(this.whiteSpace)
-            .concat("WHERE")
-            .concat(this.whiteSpace);
+        this.query += ' WHERE '
+        const entries = Object.entries(fields);
+        const inputs = createInputsFromEntries(entries, this.request).join(` ${op} `);
 
-        const keys = Object.keys(fields as Record<string, any>);
-        this.request = this.pool.request();
-
-        keys.forEach((key, idx) => {
-            this.query += `${key}=@param${idx}`;
-
-            if (idx < keys.length - 1) {
-                this.query = this.query
-                    .concat(this.whiteSpace)
-                    .concat(`${op}`)
-                    .concat(this.whiteSpace);
-            }
-
-            this.request.input(`param${idx}`, fields[key as keyof T]);
-        })
+        this.query += `${inputs}`;
 
         return this;
     }
@@ -58,23 +44,21 @@ export class Builder<T> {
             this.request.input(key, data[key as keyof T]);
         }
 
-        this.query += `(${keys.join(", ")})`
-            .concat(this.whiteSpace)
-            .concat(`VALUES (${params.join(", ")})`);
-
+        this.query += `(${keys.join(", ")}) VALUES (${params.join(", ")})`
         return this;
     }
 
-    delete({ from, data, op }: { from: string, data: T, op: 'OR' | 'AND' }) {
+    update({ from, columns }: { from: string, columns: Partial<T> }) {
+        const entries = Object.entries(columns);
+        const inputs = createInputsFromEntries(entries, this.request).join(', ');
+        this.query = `UPDATE ${from} SET ${inputs}`;
 
-        const entries = Object.entries(data as Record<any, any>)
+        return this
+    }
 
-        const arr = entries.map(([key, value]) => {
-            return [key, `@${value}`]
-        })
-
-        this.query = `DELETE FROM ${from} WHERE `
-
+    delete({ from }: { from: string }) {
+        this.query = `DELETE FROM ${from}`;
+        return this
     }
 
     raw(command: string) {
@@ -82,7 +66,6 @@ export class Builder<T> {
     }
 
     async execute() {
-        console.log(this.query);
         const results = await this.request.query(this.query);
         return results;
     }
