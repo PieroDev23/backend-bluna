@@ -5,7 +5,7 @@ export class Builder<T> {
     private pool: ConnectionPool;
     private query: string;
     private whiteSpace = "\u00A0";
-    private request: Request;
+    private request: Request | null = null;
 
     setPool(pool: ConnectionPool) {
         this.pool = pool;
@@ -14,6 +14,7 @@ export class Builder<T> {
 
     select(data: { from: string; fields?: Array<keyof T> }) {
         let properties: string = "*";
+
         if (data.fields) {
             properties = data.fields.join(", ");
         }
@@ -24,7 +25,12 @@ export class Builder<T> {
     }
 
     where({ fields, op }: { fields: Partial<T>; op?: "OR" | "AND" }) {
-        this.query += ' WHERE '
+
+        if (this.request === null) {
+            this.request = this.pool.request();
+        }
+
+        this.query += ' WHERE ';
         const entries = Object.entries(fields);
         const inputs = createInputsFromEntries(entries, this.request).join(` ${op} `);
 
@@ -50,6 +56,12 @@ export class Builder<T> {
 
     update({ from, columns }: { from: string, columns: Partial<T> }) {
         const entries = Object.entries(columns);
+
+        if (this.request === null) {
+            console.log('entra update')
+            this.request = this.pool.request();
+        }
+
         const inputs = createInputsFromEntries(entries, this.request).join(', ');
         this.query = `UPDATE ${from} SET ${inputs}`;
 
@@ -66,6 +78,12 @@ export class Builder<T> {
     }
 
     async execute() {
+
+        if (this.request === null) {
+            this.request = this.pool.request();
+        }
+
+        console.log(this.query);
         const results = await this.request.query(this.query);
         return results;
     }

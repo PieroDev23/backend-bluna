@@ -14,6 +14,7 @@ export interface Product {
     product_name: string;
     shelf_id: number;
     stock: number;
+    code: string;
     price: number;
     created_at: Date;
     updated_at: Date;

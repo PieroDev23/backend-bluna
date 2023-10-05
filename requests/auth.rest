@@ -3,8 +3,17 @@ POST {{base_url}}/register
 Content-Type: application/json
 
 {
-  "email": "test99@test.com",
+  "email": "test1@test.com",
   "first_name": "piero",
   "last_name": "davila",
+  "password": "shapdoo123"
+}
+
+### LOGIN
+POST {{base_url}}/login
+Content-Type: application/json
+
+{
+  "email": "test1@test.com",
   "password": "shapdoo123"
 }

@@ -8,8 +8,15 @@ class Controller extends BaseController {
     protected async response(req: Request, res: Response): Promise<any> {
         try {
             const product = req.body;
-            const productUpdated = await ProductRepository.update(product);
-            this.ok(res, productUpdated);
+
+            await ProductRepository.update(product);
+
+            this.ok(res, {
+                ok: true,
+                product,
+                msg: 'product succesfully updated'
+            });
+
         } catch (error) {
             this.serverError(res, error);
         }
@@ -19,7 +26,6 @@ class Controller extends BaseController {
 
 
 export const updateProductController = async (req: Request, res: Response) => {
-
     const updateProductController = new Controller();
     updateProductController.execute(req, res);
 }

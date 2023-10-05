@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 export type ValidationError = {
     msg: string;
-    field: string;
+    field?: string;
 }
 
 export abstract class BaseValidator {
@@ -34,7 +34,7 @@ export abstract class BaseValidator {
     }
 
     protected hasProperty(prop: string) {
-        if (!prop) this.errors.push({ msg: `${prop} required`, field: prop })
+        if (!this.payload[prop]) this.errors.push({ msg: `${prop} required`, field: prop })
         return this
     }
 

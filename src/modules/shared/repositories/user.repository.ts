@@ -15,9 +15,9 @@ export class UserRepository {
             const { recordset } = await builder
                 .select({
                     from: 'users',
-                    fields: ['user_id', 'first_name', 'last_name', 'role', 'email']
+                    fields: ['user_id', 'first_name', 'last_name', 'role', 'email', 'password']
                 })
-                .where({ fields: { ...data }, op: 'OR' })
+                .where({ fields: data, op: 'OR' })
                 .execute();
 
 
@@ -28,7 +28,8 @@ export class UserRepository {
 
         } catch (error) {
             const { message } = processError(error);
-            console.log(message);
+            console.log(message, error);
+
             pool.close();
         }
     }
@@ -67,7 +68,7 @@ export class UserRepository {
 
         } catch (error) {
             const { message } = processError(error);
-            console.log(message);
+            console.log('ERROR INSERT', message, error);
             pool.close();
         }
 

@@ -37,7 +37,7 @@ export abstract class BaseController {
 
     protected serverError(res: Response, error: unknown) {
         const { message } = processError(error);
-
+        console.error('[SERVER ERROR]', error)
         this.json(res, 500, { msg: 'internal server error', error: message });
     }
 }

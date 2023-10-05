@@ -26,7 +26,7 @@ export class AppBluna {
 
     routes() {
         this.app.use('/auth', authRouter);
-        this.app.use('/porducts', productsRouter);
+        this.app.use('/products', productsRouter);
     }
 
     listen(port: number | string) {

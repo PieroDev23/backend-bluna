@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 class Controller extends BaseController {
     protected async response(req: Request, res: Response): Promise<any> {
         try {
-            const { id } = req.query;
+            const { id } = req.params;
             await ProductRepository.delete(Number(id));
 
             res.status(200).json({

@@ -7,13 +7,12 @@ import { NextFunction, Request, Response } from "express";
 class Validator extends BaseValidator {
     protected async process(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-
-            if (!req.query['id']) {
-                this.errors.push({ field: '', msg: 'id required' });
+            if (!req.params['id']) {
+                this.errors.push({ msg: 'id is required' });
             }
 
             if (this.errors.length > 0) {
-                res.status(400).json({
+                return res.status(400).json({
                     ok: false,
                     errors: this.errors
                 });
@@ -24,6 +23,11 @@ class Validator extends BaseValidator {
         } catch (error) {
             const { message } = processError(error);
             console.log(message);
+
+            res.status(500).json({
+                ok: false,
+                msg: 'something went wrong'
+            })
         }
     }
 }

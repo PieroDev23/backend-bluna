@@ -7,7 +7,6 @@ import { genJWT } from "src/helpers/genJWT.helper";
 class Controller extends BaseController {
     protected async response(req: Request, res: Response): Promise<any> {
         const { email, password } = req.body;
-
         try {
             const dbUser = await UserRepository.findOneBy({ email });
 
@@ -16,6 +15,7 @@ class Controller extends BaseController {
                 return
             }
 
+
             const validPassword = bcrypt.compareSync(password, dbUser.password);
 
             if (!validPassword) {
@@ -23,11 +23,19 @@ class Controller extends BaseController {
                 return
             }
 
+            const { user_id, first_name, last_name, role, email: emailDb } = dbUser;
+
             const token = genJWT(email);
 
             this.ok(res, {
                 ok: true,
-                ...dbUser,
+                user: {
+                    user_id,
+                    first_name,
+                    last_name,
+                    role,
+                    email: emailDb
+                },
                 token
             });
 

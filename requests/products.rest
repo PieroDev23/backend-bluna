@@ -1,0 +1,42 @@
+@base_url= http://localhost:8000/products
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoidGVzdDFAdGVzdC5jb20iLCJpYXQiOjE2OTY0ODQ5NTksImV4cCI6MTY5NjQ4ODU1OX0.ApFux543ufuPZVa02jvQvNUpejhhFrJXfpkkicUezHc
+
+### GET ALL PRODUCTS
+GET {{base_url}}/getAll
+x-bluna-token: {{token}}
+
+### GET PRODUCT BY ID
+GET {{base_url}}/get-product/1
+x-bluna-token: {{token}}
+
+
+### CREATE PRODUCT
+POST {{base_url}}/new-product
+Content-Type: application/json
+x-bluna-token: {{token}}
+
+{
+    "product_name": "caja de cartón",
+    "shelf_id": "1",
+    "stock": "100",
+    "price": "0.5"
+}
+
+###  UPDATE PRODUCT
+PUT {{base_url}}/update-product
+Content-Type: application/json
+x-bluna-token: {{token}}
+
+{
+    "product_name": "caja de cartón",
+    "shelf_id": "1",
+    "stock": "100",
+    "price": "0.5",
+    "code": "A27",
+    "product_id": "1"
+}
+
+### DELETE PRODUCT
+DELETE {{base_url}}/delete-product/1
+Content-Type: application/json
+x-bluna-token: {{token}}

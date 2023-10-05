@@ -1,6 +1,7 @@
 import { processError } from "@lib/helpers/processError.helper";
 import { BaseValidator } from "@lib/http/BaseValidator.http";
 import { Request, Response, NextFunction } from "express";
+import { verifyJWT } from "src/helpers/verifyJWT.helper";
 
 class Validator extends BaseValidator {
     protected async process(req: Request, res: Response, next: NextFunction): Promise<any> {
@@ -15,11 +16,15 @@ class Validator extends BaseValidator {
                 });
             }
 
+            await verifyJWT(String(req.headers['x-bluna-token']));
+
             next();
 
         } catch (error) {
             const { message } = processError(error);
-            console.log(message);
+
+            console.log('[token validator] ', message);
+            res.status(500).json({ error: '[token validator] something went wrong' })
         }
 
     }

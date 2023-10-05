@@ -34,7 +34,7 @@ export class ProductRepository {
         const builder = new Builder<Product>().setPool(pool);
 
         try {
-            const { recordset } = await builder
+            const { recordset, ...rest } = await builder
                 .select({
                     from: 'products',
                     fields: ['product_id', 'product_name', 'price', 'stock', 'shelf_id']
@@ -42,6 +42,7 @@ export class ProductRepository {
                 .execute();
 
             pool.close();
+
             return recordset as Product[];
 
         } catch (error) {
@@ -88,14 +89,14 @@ export class ProductRepository {
         const builder = new Builder<Product>().setPool(pool);
 
         try {
-            const { recordset } = await builder
-                .update({ from: 'products', columns: data })
-                .where({ fields: { product_id: data.product_id } }).execute();
+            const { product_id, ...restProduct } = data;
 
-            const [product] = recordset;
+            await builder
+                .update({ from: 'products', columns: restProduct })
+                .where({ fields: { product_id } }).execute();
+
             pool.close();
 
-            return product as Product;
         } catch (error) {
             const { message } = processError(error);
             console.log(message);
