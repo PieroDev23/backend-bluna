@@ -5,9 +5,27 @@ import { Database } from "src/database";
 
 export class ProductRepository {
 
-
-
     static async findOneBy(data: Partial<Product>) {
+        const pool = await Database.pool();
+        const builder = new Builder<Product>().setPool(pool);
+        try {
+
+            const { recordset } = await builder
+                .select({ from: 'products' })
+                .where({ fields: { product_id: data.product_id } })
+                .execute();
+
+            const [product] = recordset;
+
+            pool.close();
+
+            return product as Product || null;
+
+        } catch (error) {
+            const { message } = processError(error);
+            console.log(message);
+            pool.close();
+        }
 
     }
 
@@ -75,9 +93,13 @@ export class ProductRepository {
                 .where({ fields: { product_id: data.product_id } }).execute();
 
             const [product] = recordset;
+            pool.close();
 
             return product as Product;
         } catch (error) {
+            const { message } = processError(error);
+            console.log(message);
+            pool.close();
 
         }
     }

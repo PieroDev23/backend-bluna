@@ -11,6 +11,7 @@ import { Router } from "express";
 export const productsRouter = Router();
 
 productsRouter.get('/getAll', tokenValidator, getProductsController);
+productsRouter.get('/get-product/:id', [tokenValidator, hasIdValidator],)
 productsRouter.post('/new-product', [tokenValidator, productsValidator], createProductController);
 productsRouter.put('/update-product', [tokenValidator, productsValidator], updateProductController);
 productsRouter.delete('/delete-product/:id', [tokenValidator, hasIdValidator], deleteProductController);
