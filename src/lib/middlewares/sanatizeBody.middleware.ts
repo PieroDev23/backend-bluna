@@ -6,9 +6,8 @@ export function sanatizeBody(req: Request, res: Response, next: NextFunction) {
     const sanatizedBody = bodyMatrix.reduce((prev, matrix: [string, any]) => {
         const [key, rawValue] = matrix;
 
-        const value = typeof rawValue === 'string' && key !== 'role' ?
-            rawValue.trim().toLowerCase() :
-            rawValue.trim();
+        const value = (typeof rawValue === 'string' && key !== 'role') &&
+            rawValue.trim().toLowerCase();
 
         return {
             ...prev,
