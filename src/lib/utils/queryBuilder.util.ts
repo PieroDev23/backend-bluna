@@ -62,7 +62,6 @@ export class Builder<T> {
         const entries = Object.entries(columns);
 
         if (this.request === null) {
-            console.log('entra update')
             this.request = this.pool.request();
         }
 

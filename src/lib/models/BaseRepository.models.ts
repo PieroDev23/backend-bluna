@@ -8,7 +8,7 @@ export abstract class BaseRepository<T> {
     abstract getAll(): Promise<T[] | undefined>;
     abstract create(data: T): Promise<void | undefined>;
     abstract delete(param: string | number): Promise<void | undefined>;
-    abstract update(data: T): Promise<void | undefined>;
+    abstract update(data: Partial<T>): Promise<void | undefined>;
 
     throwRepoError(error: unknown) {
         const { message } = processError(error);

@@ -4,7 +4,8 @@ import express, { json } from 'express';
 import morgan from 'morgan';
 import { sanatizeBody } from '@lib/middlewares/sanatizeBody.middleware';
 import { authRouter } from '@auth/routes/auth.routes';
-import { productsRouter } from '@products/routes/products.route';
+import { productsRouter } from '@products/routes/products.routes';
+import { requestRouter } from '@requests/routes/requests.route';
 
 export class AppBluna {
 
@@ -27,6 +28,7 @@ export class AppBluna {
     routes() {
         this.app.use('/auth', authRouter);
         this.app.use('/products', productsRouter);
+        this.app.use('/requests', requestRouter)
     }
 
     listen(port: number | string) {

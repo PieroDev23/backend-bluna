@@ -3,7 +3,7 @@ import { deleteProductController } from "@products/controllers/deleteProduct.con
 import { getProductByIdController } from "@products/controllers/getProductById.controller";
 import { getProductsController } from "@products/controllers/getProducts.controller";
 import { updateProductController } from "@products/controllers/updateProduct.controller";
-import { hasIdValidator } from "@products/middlewares/hasIdValidator.middleware";
+import { hasIdValidator } from "@shared/middlewares/hasIdValidator.middleware";
 import { productsValidator } from "@products/middlewares/productsValidator.middleware";
 import { tokenValidator } from "@shared/middlewares/tokenValidator.middleware";
 import { Router } from "express";
@@ -11,7 +11,7 @@ import { Router } from "express";
 
 export const productsRouter = Router();
 
-productsRouter.get('/getAll', tokenValidator, getProductsController);
+productsRouter.get('/get-all', tokenValidator, getProductsController);
 productsRouter.get('/get-product/:id', [tokenValidator, hasIdValidator], getProductByIdController)
 productsRouter.post('/new-product', [tokenValidator, productsValidator], createProductController);
 productsRouter.put('/update-product', [tokenValidator, productsValidator], updateProductController);

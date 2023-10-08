@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { BaseController } from "@lib/http/BaseController.http";
+import { BaseController } from "@lib/models/BaseController.model";
 import { User } from "@lib/interfaces/baseDef.interfaces";
 import bcrypt from 'bcryptjs';
 import { genJWT } from "src/helpers/genJWT.helper";

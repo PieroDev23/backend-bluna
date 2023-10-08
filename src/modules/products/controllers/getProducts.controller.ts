@@ -1,4 +1,4 @@
-import { BaseController } from "@lib/http/BaseController.http";
+import { BaseController } from "@lib/models/BaseController.model";
 import { ProductService } from "@shared/services/product.service";
 import { Request, Response } from "express";
 

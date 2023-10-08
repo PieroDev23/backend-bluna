@@ -1,7 +1,6 @@
-import { BaseRepository } from "@lib/http/BaseRepository.http";
+import { BaseRepository } from "@lib/models/BaseRepository.models";
 import { User } from "@lib/interfaces/baseDef.interfaces";
 import { Builder } from "@lib/utils/queryBuilder.util";
-
 
 
 export class UserRepository extends BaseRepository<User>{
@@ -71,7 +70,7 @@ export class UserRepository extends BaseRepository<User>{
         throw new Error("Method not implemented.");
     }
 
-    update(data: User): Promise<void> {
+    update(data: Partial<User>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

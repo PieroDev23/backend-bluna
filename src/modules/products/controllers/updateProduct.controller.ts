@@ -1,4 +1,4 @@
-import { BaseController } from "@lib/http/BaseController.http";
+import { BaseController } from "@lib/models/BaseController.model";
 import { ProductService } from "@shared/services/product.service";
 import { Request, Response } from "express";
 
@@ -9,7 +9,6 @@ class Controller extends BaseController {
         try {
             const product = req.body;
             const productRepository = await ProductService.useRepository();
-
             await productRepository.update(product);
 
             this.ok(res, {
@@ -22,7 +21,6 @@ class Controller extends BaseController {
             this.serverError(res, error);
         }
     }
-
 }
 
 

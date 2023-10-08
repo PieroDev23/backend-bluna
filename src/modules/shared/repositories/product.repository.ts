@@ -1,4 +1,4 @@
-import { BaseRepository } from "@lib/http/BaseRepository.http";
+import { BaseRepository } from "@lib/models/BaseRepository.models";
 import { Product } from "@lib/interfaces/baseDef.interfaces";
 import { Builder } from "@lib/utils/queryBuilder.util";
 import { ConnectionPool } from "mssql";
@@ -18,7 +18,7 @@ export class ProductRepository extends BaseRepository<Product>{
 
             const { recordset } = await this.queryBuilder
                 .select({ from: 'products' })
-                .where({ fields: { product_id: params.product_id } })
+                .where({ fields: { ...params }, op: 'OR' })
                 .execute();
 
             const [product] = recordset;
@@ -76,7 +76,7 @@ export class ProductRepository extends BaseRepository<Product>{
         }
     }
 
-    async update(data: Product): Promise<void | undefined> {
+    async update(data: Partial<Product>): Promise<void | undefined> {
         try {
             const { product_id, ...restProduct } = data;
 

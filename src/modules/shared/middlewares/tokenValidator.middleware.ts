@@ -1,5 +1,5 @@
 import { processError } from "@lib/helpers/processError.helper";
-import { BaseValidator } from "@lib/http/BaseValidator.http";
+import { BaseValidator } from "@lib/models/BaseValidator.models";
 import { Request, Response, NextFunction } from "express";
 import { verifyJWT } from "src/helpers/verifyJWT.helper";
 

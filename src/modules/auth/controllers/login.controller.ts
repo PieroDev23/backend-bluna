@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { BaseController } from "@lib/http/BaseController.http";
-import { UserRepository } from "@shared/repositories/user.repository";
+import { BaseController } from "@lib/models/BaseController.model";
 import bcrypt from 'bcryptjs';
 import { genJWT } from "src/helpers/genJWT.helper";
 import { UserService } from "@shared/services/user.service";
@@ -16,7 +15,6 @@ class Controller extends BaseController {
                 this.badRequest(res, { ok: false, msg: 'account does not exist.' });
                 return
             }
-
 
             const validPassword = bcrypt.compareSync(password, dbUser.password);
 

@@ -3,7 +3,6 @@ export interface BaseEntity {
     updated_at: Date;
 }
 
-
 export interface User extends BaseEntity {
     user_id: number | string;
     first_name: string;
@@ -11,6 +10,14 @@ export interface User extends BaseEntity {
     password: string;
     role: 'NOT_ASSIGNED' | 'ADMIN' | 'COLLABORATOR';
     email: string;
+}
+
+export interface IRequest extends BaseEntity {
+    request_id: number | string;
+    quantity: number;
+    user_id: number | string;
+    product_id: number | string;
+    status: 'PENDIENTE' | 'ACEPTADO' | 'RECHAZADO';
 }
 
 export interface Product extends BaseEntity {
