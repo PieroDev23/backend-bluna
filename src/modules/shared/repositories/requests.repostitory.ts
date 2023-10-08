@@ -20,13 +20,15 @@ export class RequestsRepository extends BaseRepository<IRequest> {
     async getAll(): Promise<IRequest[] | undefined> {
         try {
             const { recordset } = await this.queryBuilder
-                .select({
-                    from: 'requests',
-                    fields: ['request_id', 'user_id', 'product_id', 'status', 'created_at']
-                }).execute();
+                .selectJoin({
+                    fields: ['Requests.request_id', 'Users.last_name', 'Users.first_name', 'Requests.quantity, Requests.status'],
+                    joinType: 'INNER',
+                    on: 'Users.user_id = Requests.user_id'
+                })
+                .execute();
 
             this.pool.close();
-            return recordset as IRequest[];
+            return recordset;
 
         } catch (error) {
             this.pool.close();
@@ -34,8 +36,17 @@ export class RequestsRepository extends BaseRepository<IRequest> {
         }
     }
 
-    create(data: IRequest): Promise<void | undefined> {
-        throw new Error("Method not implemented.");
+    async create(data: IRequest): Promise<void | undefined> {
+        try {
+            await this.queryBuilder
+                .insert({ into: 'requests', data })
+                .execute();
+
+            this.pool.close();
+        } catch (error) {
+            this.pool.close();
+            this.throwRepoError(error);
+        }
     }
 
     delete(param: string | number): Promise<void | undefined> {
@@ -50,7 +61,10 @@ export class RequestsRepository extends BaseRepository<IRequest> {
                 .where({ fields: { request_id } })
                 .execute();
 
+            this.pool.close();
+
         } catch (error) {
+            this.pool.close();
             this.throwRepoError(error);
         }
     }

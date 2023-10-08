@@ -1,5 +1,6 @@
 import { ConnectionPool, Request } from "mssql";
 import { createInputsFromEntries } from "./getInput.util";
+import { SelectJoinOptions } from "@lib/interfaces/baseDef.interfaces";
 
 export class Builder<T> {
     public pool: ConnectionPool;
@@ -78,6 +79,12 @@ export class Builder<T> {
 
     raw(command: string) {
         this.query = command;
+    }
+
+    selectJoin({ fields, joinType, on }: SelectJoinOptions) {
+        this.query = `SELECT ${fields.join(', ')} FROM ${joinType} JOIN ${on}`;
+
+        return this;
     }
 
     async execute() {

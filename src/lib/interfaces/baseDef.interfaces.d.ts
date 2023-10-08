@@ -1,6 +1,6 @@
 export interface BaseEntity {
-    created_at: Date;
-    updated_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface User extends BaseEntity {
@@ -27,4 +27,10 @@ export interface Product extends BaseEntity {
     stock: number;
     code: string;
     price: number;
+}
+
+export interface SelectJoinOptions {
+    fields: string[],
+    joinType: 'INNER' | 'LEFT' | 'RIGHT',
+    on: string;
 }
