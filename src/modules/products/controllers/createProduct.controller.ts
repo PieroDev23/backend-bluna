@@ -1,6 +1,6 @@
 import { BaseController } from "@lib/http/BaseController.http";
 import { Product } from "@lib/interfaces/baseDef.interfaces";
-import { ProductRepository } from "@shared/repositories/product.repository";
+import { ProductService } from "@shared/services/product.service";
 import { Request, Response } from "express";
 
 
@@ -8,7 +8,8 @@ class Controller extends BaseController {
     protected async response(req: Request, res: Response): Promise<any> {
         try {
             const product: Product = req.body;
-            await ProductRepository.create(product);
+            const productRepository = await ProductService.useRepository();
+            await productRepository.create(product);
 
             this.ok(res, {
                 ok: true,

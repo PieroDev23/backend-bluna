@@ -1,13 +1,13 @@
 import { BaseController } from "@lib/http/BaseController.http";
-import { ProductRepository } from "@shared/repositories/product.repository";
+import { ProductService } from "@shared/services/product.service";
 import { Request, Response } from "express";
 
 class Controller extends BaseController {
     protected async response(req: Request, res: Response): Promise<any> {
         try {
             const id = Number(req.query['id']);
-
-            const product = await ProductRepository.findOneBy({ product_id: id });
+            const productRepository = await ProductService.useRepository();
+            const product = await productRepository.findOneBy({ product_id: id });
 
             if (!product) {
                 return this.json(res, 404,

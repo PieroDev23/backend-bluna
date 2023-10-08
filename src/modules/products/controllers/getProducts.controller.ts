@@ -1,5 +1,5 @@
 import { BaseController } from "@lib/http/BaseController.http";
-import { ProductRepository } from "@shared/repositories/product.repository";
+import { ProductService } from "@shared/services/product.service";
 import { Request, Response } from "express";
 
 
@@ -7,7 +7,9 @@ class Controller extends BaseController {
 
     protected async response(req: Request, res: Response): Promise<any> {
         try {
-            const products = await ProductRepository.getAll();
+            const productRepository = await ProductService.useRepository();
+            const products = await productRepository.getAll();
+
             this.ok(res, { ok: true, products });
         } catch (error) {
             this.serverError(res, error);

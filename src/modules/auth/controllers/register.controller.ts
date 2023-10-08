@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { BaseController } from "@lib/http/BaseController.http";
 import { User } from "@lib/interfaces/baseDef.interfaces";
-import { UserRepository } from "@shared/repositories/user.repository";
 import bcrypt from 'bcryptjs';
 import { genJWT } from "src/helpers/genJWT.helper";
+import { UserService } from "@shared/services/user.service";
 
 class Controller extends BaseController {
 
@@ -11,7 +11,8 @@ class Controller extends BaseController {
         const { email, password, ...rest } = req.body satisfies User;
 
         try {
-            const dbUser = await UserRepository.findOneBy({ email });
+            const userRepository = await UserService.useRepository();
+            const dbUser = await userRepository.findOneBy({ email });
 
             if (dbUser) {
                 this.badRequest(res, {
@@ -33,8 +34,9 @@ class Controller extends BaseController {
                 ...rest
             };
 
-            await UserRepository.create(newUser);
+            await userRepository.create(newUser);
             this.ok(res, { ...newUser, token });
+
         } catch (error) {
             this.serverError(res, error);
         }

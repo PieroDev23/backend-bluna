@@ -2,7 +2,7 @@ import { ConnectionPool, Request } from "mssql";
 import { createInputsFromEntries } from "./getInput.util";
 
 export class Builder<T> {
-    private pool: ConnectionPool;
+    public pool: ConnectionPool;
     private query: string;
     private whiteSpace = "\u00A0";
     private request: Request | null = null;
@@ -10,6 +10,10 @@ export class Builder<T> {
     setPool(pool: ConnectionPool) {
         this.pool = pool;
         return this;
+    }
+
+    getPool() {
+        return this.pool
     }
 
     select(data: { from: string; fields?: Array<keyof T> }) {

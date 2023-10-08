@@ -1,80 +1,77 @@
-import { processError } from "@lib/helpers/processError.helper";
+import { BaseRepository } from "@lib/http/BaseRepository.http";
 import { User } from "@lib/interfaces/baseDef.interfaces";
 import { Builder } from "@lib/utils/queryBuilder.util";
-import { Database } from "src/database";
 
 
 
-export class UserRepository {
+export class UserRepository extends BaseRepository<User>{
 
-    static async findOneBy(data: Partial<User>) {
-        const pool = await Database.pool();
-        const builder = new Builder<User>().setPool(pool);
+    constructor(private queryBuilder: Builder<User>) {
+        super();
+    }
+
+    get pool() {
+        return this.queryBuilder.getPool();
+    }
+
+    async findOneBy(params: Partial<User>): Promise<User | null | undefined> {
         try {
-
-            const { recordset } = await builder
+            const { recordset } = await this.queryBuilder
                 .select({
                     from: 'users',
                     fields: ['user_id', 'first_name', 'last_name', 'role', 'email', 'password']
                 })
-                .where({ fields: data, op: 'OR' })
+                .where({ fields: params, op: 'OR' })
                 .execute();
 
-
             const [user] = recordset;
-            pool.close();
 
+            this.pool.close();
             return !user ? null : user as User;
 
         } catch (error) {
-            const { message } = processError(error);
-            console.log(message, error);
-
-            pool.close();
+            this.pool.close();
+            this.throwRepoError(error);
         }
     }
 
-    static async getAll() {
-        const pool = await Database.pool();
-        const builder = new Builder<User>().setPool(pool);
+    async getAll(): Promise<User[] | undefined> {
         try {
-            const { recordset } = await builder
+            const { recordset } = await this.queryBuilder
                 .select({
                     from: 'users',
                     fields: ['user_id', 'first_name', 'last_name', 'email', 'role']
                 })
                 .execute();
 
-            pool.close();
 
-            return recordset as User[]
+            this.pool.close();
+            return recordset as User[];
 
         } catch (error) {
-            const { message } = processError(error);
-            console.log(message);
-            pool.close();
+            this.pool.close();
+            this.throwRepoError(error);
         }
     }
 
-    static async create(data: User) {
-        const pool = await Database.pool();
-        const builder = new Builder<User>().setPool(pool);
+    async create(data: User): Promise<void | undefined> {
         try {
-            await builder
+            await this.queryBuilder
                 .insert({ into: 'users', data })
                 .execute();
 
-            pool.close();
-
+            this.pool.close();
         } catch (error) {
-            const { message } = processError(error);
-            console.log('ERROR INSERT', message, error);
-            pool.close();
+            this.pool.close();
+            this.throwRepoError(error);
         }
-
     }
 
-    static async drop(id: number) {
+    delete(param: string | number): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
 
+    update(data: User): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 }

@@ -3,12 +3,14 @@ import { BaseController } from "@lib/http/BaseController.http";
 import { UserRepository } from "@shared/repositories/user.repository";
 import bcrypt from 'bcryptjs';
 import { genJWT } from "src/helpers/genJWT.helper";
+import { UserService } from "@shared/services/user.service";
 
 class Controller extends BaseController {
     protected async response(req: Request, res: Response): Promise<any> {
         const { email, password } = req.body;
         try {
-            const dbUser = await UserRepository.findOneBy({ email });
+            const userRepository = await UserService.useRepository();
+            const dbUser = await userRepository.findOneBy({ email });
 
             if (!dbUser) {
                 this.badRequest(res, { ok: false, msg: 'account does not exist.' });

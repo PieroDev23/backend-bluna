@@ -1,109 +1,93 @@
-import { processError } from "@lib/helpers/processError.helper";
+import { BaseRepository } from "@lib/http/BaseRepository.http";
 import { Product } from "@lib/interfaces/baseDef.interfaces";
 import { Builder } from "@lib/utils/queryBuilder.util";
-import { Database } from "src/database";
+import { ConnectionPool } from "mssql";
 
-export class ProductRepository {
+export class ProductRepository extends BaseRepository<Product>{
 
-    static async findOneBy(data: Partial<Product>) {
-        const pool = await Database.pool();
-        const builder = new Builder<Product>().setPool(pool);
+    constructor(private queryBuilder: Builder<Product>) {
+        super();
+    }
+
+    get pool(): ConnectionPool {
+        return this.queryBuilder.getPool();
+    }
+
+    async findOneBy(params: Partial<Product>): Promise<Product | null | undefined> {
         try {
 
-            const { recordset } = await builder
+            const { recordset } = await this.queryBuilder
                 .select({ from: 'products' })
-                .where({ fields: { product_id: data.product_id } })
+                .where({ fields: { product_id: params.product_id } })
                 .execute();
 
             const [product] = recordset;
 
-            pool.close();
-
+            this.pool.close();
             return product as Product || null;
 
         } catch (error) {
-            const { message } = processError(error);
-            console.log(message);
-            pool.close();
+            this.throwRepoError(error);
         }
-
     }
 
-    static async getAll() {
-        const pool = await Database.pool();
-        const builder = new Builder<Product>().setPool(pool);
-
+    async getAll(): Promise<Product[] | undefined> {
         try {
-            const { recordset, ...rest } = await builder
+            const { recordset, ...rest } = await this.queryBuilder
                 .select({
                     from: 'products',
                     fields: ['product_id', 'product_name', 'price', 'stock', 'shelf_id']
                 })
                 .execute();
 
-            pool.close();
-
+            this.pool.close();
             return recordset as Product[];
 
         } catch (error) {
-            const { message } = processError(error);
-            console.log(message);
-            pool.close();
+            this.pool.close();
+            this.throwRepoError(error);
         }
     }
 
-    static async create(data: Product) {
-        const pool = await Database.pool();
-        const builder = new Builder<Product>().setPool(pool);
-
+    async create(data: Product): Promise<void | undefined> {
         try {
-            await builder
+            await this.queryBuilder
                 .insert({ into: 'products', data })
                 .execute();
 
+            this.pool.close();
         } catch (error) {
-            const { message } = processError(error);
-            console.log(message);
-            pool.close();
+            this.pool.close();
+            this.throwRepoError(error);
         }
-
     }
 
-    static async delete(product_id: number) {
-        const pool = await Database.pool();
-        const builder = new Builder<Product>().setPool(pool);
+    async delete(product_id: string | number): Promise<void | undefined> {
         try {
-            await builder.delete({ from: 'products' })
+            await this.queryBuilder.delete({ from: 'products' })
+                .where({ fields: { product_id } })
+                .execute();
+
+            this.pool.close();
+
+        } catch (error) {
+            this.pool.close();
+            this.throwRepoError(error);
+        }
+    }
+
+    async update(data: Product): Promise<void | undefined> {
+        try {
+            const { product_id, ...restProduct } = data;
+
+            await this.queryBuilder
+                .update({ from: 'products', columns: restProduct })
                 .where({ fields: { product_id } })
                 .execute();
 
         } catch (error) {
-            const { message } = processError(error);
-            console.log(message);
-            pool.close();
+            this.pool.close();
+            this.throwRepoError(error);
         }
     }
-
-    static async update(data: Product) {
-        const pool = await Database.pool();
-        const builder = new Builder<Product>().setPool(pool);
-
-        try {
-            const { product_id, ...restProduct } = data;
-
-            await builder
-                .update({ from: 'products', columns: restProduct })
-                .where({ fields: { product_id } }).execute();
-
-            pool.close();
-
-        } catch (error) {
-            const { message } = processError(error);
-            console.log(message);
-            pool.close();
-
-        }
-    }
-
-
 }
