@@ -34,7 +34,7 @@ class Controller extends BaseController {
             };
 
             await userRepository.create(newUser);
-            this.ok(res, { ...newUser, token });
+            this.ok(res, { ...newUser, token, ok: true });
 
         } catch (error) {
             this.serverError(res, error);
