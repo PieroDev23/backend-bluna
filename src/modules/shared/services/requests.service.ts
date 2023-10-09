@@ -6,8 +6,7 @@ import { Database } from "src/database";
 export class RequestsService {
 
     static async useRepository() {
-        const pool = await Database.pool();
-        const builder = new Builder<IRequest>().setPool(pool);
+        const builder = new Builder<IRequest>();
         const requestsRepository = new RequestsRepository(builder);
 
         return requestsRepository;

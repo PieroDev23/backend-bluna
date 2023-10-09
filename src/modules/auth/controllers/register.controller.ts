@@ -15,11 +15,10 @@ class Controller extends BaseController {
             const dbUser = await userRepository.findOneBy({ email });
 
             if (dbUser) {
-                this.badRequest(res, {
+                return this.badRequest(res, {
                     ok: false,
                     msg: 'this account already exist.'
                 });
-                return
             }
 
             const salt = bcrypt.genSaltSync(11);
