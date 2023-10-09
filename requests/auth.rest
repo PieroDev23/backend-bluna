@@ -1,9 +1,9 @@
-@base_url= http://localhost:8000/auth
+@base_url= http://localhost:6000/auth
 POST {{base_url}}/register
 Content-Type: application/json
 
 {
-  "email": "test1@test.com",
+  "email": "zenpraw0@gmail.com",
   "first_name": "piero",
   "last_name": "davila",
   "password": "shapdoo123"

@@ -19,7 +19,6 @@ class Controller extends BaseController {
                     ok: false,
                     msg: 'this account already exist.'
                 });
-
                 return
             }
 

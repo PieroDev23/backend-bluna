@@ -2,6 +2,7 @@ import { BaseRepository } from "@lib/models/BaseRepository.models";
 import { Product } from "@lib/interfaces/baseDef.interfaces";
 import { Builder } from "@lib/utils/queryBuilder.util";
 import { ConnectionPool } from "mssql";
+import { Database } from "src/database";
 
 export class ProductRepository extends BaseRepository<Product>{
 
@@ -13,9 +14,13 @@ export class ProductRepository extends BaseRepository<Product>{
         return this.queryBuilder.getPool();
     }
 
+    async openConnection(): Promise<void> {
+        this.queryBuilder.setPool(await Database.pool());
+    }
+
     async findOneBy(params: Partial<Product>): Promise<Product | null | undefined> {
         try {
-
+            await this.openConnection();
             const { recordset } = await this.queryBuilder
                 .select({ from: 'products' })
                 .where({ fields: { ...params }, op: 'OR' })
@@ -27,12 +32,14 @@ export class ProductRepository extends BaseRepository<Product>{
             return product as Product || null;
 
         } catch (error) {
+            this.pool.close();
             this.throwRepoError(error);
         }
     }
 
     async getAll(): Promise<Product[] | undefined> {
         try {
+            await this.openConnection();
             const { recordset, ...rest } = await this.queryBuilder
                 .select({
                     from: 'products',
@@ -51,6 +58,7 @@ export class ProductRepository extends BaseRepository<Product>{
 
     async create(data: Product): Promise<void | undefined> {
         try {
+            await this.openConnection();
             await this.queryBuilder
                 .insert({ into: 'products', data })
                 .execute();
@@ -64,6 +72,7 @@ export class ProductRepository extends BaseRepository<Product>{
 
     async delete(product_id: string | number): Promise<void | undefined> {
         try {
+            await this.openConnection();
             await this.queryBuilder.delete({ from: 'products' })
                 .where({ fields: { product_id } })
                 .execute();
@@ -78,6 +87,7 @@ export class ProductRepository extends BaseRepository<Product>{
 
     async update(data: Partial<Product>): Promise<void | undefined> {
         try {
+            await this.openConnection();
             const { product_id, ...restProduct } = data;
 
             await this.queryBuilder

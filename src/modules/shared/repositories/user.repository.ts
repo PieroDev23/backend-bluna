@@ -1,6 +1,7 @@
 import { BaseRepository } from "@lib/models/BaseRepository.models";
 import { User } from "@lib/interfaces/baseDef.interfaces";
 import { Builder } from "@lib/utils/queryBuilder.util";
+import { Database } from "src/database";
 
 
 export class UserRepository extends BaseRepository<User>{
@@ -13,8 +14,14 @@ export class UserRepository extends BaseRepository<User>{
         return this.queryBuilder.getPool();
     }
 
+    async openConnection() {
+        this.queryBuilder.setPool(await Database.pool());
+    }
+
     async findOneBy(params: Partial<User>): Promise<User | null | undefined> {
         try {
+            await this.openConnection();
+
             const { recordset } = await this.queryBuilder
                 .select({
                     from: 'users',
@@ -36,6 +43,7 @@ export class UserRepository extends BaseRepository<User>{
 
     async getAll(): Promise<User[] | undefined> {
         try {
+            await this.openConnection();
             const { recordset } = await this.queryBuilder
                 .select({
                     from: 'users',
@@ -55,6 +63,7 @@ export class UserRepository extends BaseRepository<User>{
 
     async create(data: User): Promise<void | undefined> {
         try {
+            await this.openConnection();
             await this.queryBuilder
                 .insert({ into: 'users', data })
                 .execute();

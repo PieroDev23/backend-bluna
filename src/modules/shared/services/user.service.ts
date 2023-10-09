@@ -7,8 +7,7 @@ import { Database } from "src/database";
 export class UserService {
 
     static async useRepository() {
-        const pool = await Database.pool();
-        const builder = new Builder<User>().setPool(pool);
+        const builder = new Builder<User>();
         const userRepository = new UserRepository(builder);
 
         return userRepository;
