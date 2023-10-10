@@ -6,6 +6,7 @@ import { sanatizeBody } from '@lib/middlewares/sanatizeBody.middleware';
 import { authRouter } from '@auth/routes/auth.routes';
 import { productsRouter } from '@products/routes/products.routes';
 import { requestRouter } from '@requests/routes/requests.route';
+import { usersRouter } from './modules/users/routes/users.routes';
 
 export class AppBluna {
 
@@ -28,7 +29,8 @@ export class AppBluna {
     routes() {
         this.app.use('/auth', authRouter);
         this.app.use('/products', productsRouter);
-        this.app.use('/requests', requestRouter)
+        this.app.use('/requests', requestRouter);
+        this.app.use('/users', usersRouter);
     }
 
     listen(port: number | string) {

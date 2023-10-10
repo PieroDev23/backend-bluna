@@ -79,7 +79,19 @@ export class UserRepository extends BaseRepository<User>{
         throw new Error("Method not implemented.");
     }
 
-    update(data: Partial<User>): Promise<void> {
-        throw new Error("Method not implemented.");
+    async update(data: Partial<User>): Promise<void> {
+        try {
+            await this.openConnection();
+            const { user_id, ...restUser } = data;
+
+            await this.queryBuilder
+                .update({ from: 'users', columns: restUser })
+                .where({ fields: { user_id } })
+                .execute();
+
+        } catch (error) {
+            this.pool.close();
+            this.throwRepoError(error);
+        }
     }
 }
